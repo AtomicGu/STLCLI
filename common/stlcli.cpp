@@ -24,7 +24,7 @@ void stlcli::default_cmd_help_proc(std::istream& args_in, stlcli::Console& con)
 {
 	con.lock();
 	con.width(20);
-	con << "Command Line" << "\tDiscription\n\n";
+	con << "Command Line" << "\tDescription\n\n";
 	for (auto i : con._cmd_map)
 	{
 		con.width(20);
@@ -42,7 +42,7 @@ void stlcli::default_cmd_exit_proc(std::istream& args_in, stlcli::Console& con)
 
 void stlcli::default_cmd_clear_proc(std::istream& argi, stlcli::Console& con)
 {
-	con << "\033[2J";
+	con << "\033[2J" << std::flush;
 }
 
 struct EndOfMain { int _return_code; };
@@ -105,11 +105,11 @@ int stlcli::Console::main()
 			}
 			_wrong_cmd_proc_pf(cmd, *this);
 		}
-		catch (EndOfMain& e)
+		catch (EndOfMain & e)
 		{
 			return e._return_code;
 		}
-		catch (err::ArgumentError& e)
+		catch (err::ArgumentError & e)
 		{
 			_argument_error_proc_pf(e, *this);
 			continue;

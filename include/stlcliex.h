@@ -1,10 +1,13 @@
 #pragma once
+#include "stlcli.h"
 
 /* for create a global CmdMap */
+#define CMDMAP_EXTERN(name) extern stlcli::CmdMap name;
 #define CMDMAP_BEGIN(name) stlcli::CmdMap name {
 #define CMDMAP_END() };
 
 /* for create a global Console */
+#define DEFAULT_CONSOLE_EXTERN(name) extern stlcli::Console name;
 #define DEFAULT_CONSOLE_BEGIN(name) stlcli::Console name (stlcli::CmdMap{
 #define DEFAULT_CONSOLE_END() });
 
@@ -47,3 +50,13 @@
 #define ANSI_BPURPLE	"\033[45m"
 #define ANSI_BDGREEN	"\033[46m"
 #define ANSI_BWHITE		"\033[47m"
+
+/* ANSI screen control */
+#define ANSI_CLEAR		"\033[2J"
+#define ANSI_CLEAR_LINE	"\033[K"
+
+/* ANSI cursor control */
+#define ANSI_CUR_SAVE	"\034[s"
+#define ANSI_CUR_LOAD	"\033[u"
+#define ANSI_CUR_HIDE	"\033[?25l"
+#define ANSI_CUR_SHOW	"\033[?25h"
