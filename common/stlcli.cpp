@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 by Yuhao Gu. All rights reserved.
+ * E-Mail: yhgu2000@outlook.com
+v1.1.1 */
+
 #include "stlcli.h"
 #include <string>
 #include <sstream>
@@ -25,7 +30,7 @@ void stlcli::default_cmd_help_proc(std::istream& args_in, stlcli::Console& con)
 	con.lock();
 	con.width(20);
 	con << "Command Line" << "\tDescription\n\n";
-	for (auto i : con._cmd_map)
+	for (auto i : con._cmdMap)
 	{
 		con.width(20);
 		con << i.first << '\t' << i.second._remarks << std::endl;
@@ -33,11 +38,11 @@ void stlcli::default_cmd_help_proc(std::istream& args_in, stlcli::Console& con)
 	con.unlock();
 }
 
-void stlcli::default_cmd_exit_proc(std::istream& args_in, stlcli::Console& con)
+void stlcli::default_cmd_exit_proc(std::istream& argi, stlcli::Console& con)
 {
-	int main_return = 0;
-	args_in >> main_return;
-	con.end(main_return);
+	int mainReturn = 0;
+	argi >> mainReturn;
+	con.end(mainReturn);
 }
 
 void stlcli::default_cmd_clear_proc(std::istream& argi, stlcli::Console& con)
@@ -45,38 +50,41 @@ void stlcli::default_cmd_clear_proc(std::istream& argi, stlcli::Console& con)
 	con << "\033[2J" << std::flush;
 }
 
-struct EndOfMain { int _return_code; };
+struct EndOfMain
+{
+	int _returnValue;
+};
 
 stlcli::Console::Console(
-	const CmdMap& cmd_map,
+	const CmdMap& cmdMap,
 	std::istream& in,
 	std::ostream& out,
-	pfWrongCmdProc wrong_cmd_proc_pf,
-	pfBlankCmdProc blank_cmd_proc_pf,
-	pfArgumentErrorProc argument_error_proc_pf
+	WrongCmdProc wrongCmdProc,
+	BlankCmdProc blankCmdProc,
+	ArgumentErrorProc argumentErrorProc
 ) :
 	std::ostream(out.rdbuf()),
-	_wrong_cmd_proc_pf(wrong_cmd_proc_pf),
-	_blank_cmd_proc_pf(blank_cmd_proc_pf),
-	_argument_error_proc_pf(argument_error_proc_pf),
+	_wrongCmdProc(wrongCmdProc),
+	_blankCmdProc(blankCmdProc),
+	_argumentErrorProc(argumentErrorProc),
 	_in(in),
-	_cmd_map(cmd_map)
+	_cmdMap(cmdMap)
 {}
 
 stlcli::Console::Console(
-	CmdMap&& cmd_map,
+	CmdMap&& cmdMap,
 	std::istream& in,
 	std::ostream& out,
-	pfWrongCmdProc wrong_cmd_proc_pf,
-	pfBlankCmdProc blank_cmd_proc_pf,
-	pfArgumentErrorProc argument_error_proc_pf
+	WrongCmdProc wrongCmdProc,
+	BlankCmdProc blankCmdProc,
+	ArgumentErrorProc argumentErrorProc
 ) :
 	std::ostream(out.rdbuf()),
-	_wrong_cmd_proc_pf(wrong_cmd_proc_pf),
-	_blank_cmd_proc_pf(blank_cmd_proc_pf),
-	_argument_error_proc_pf(argument_error_proc_pf),
+	_wrongCmdProc(wrongCmdProc),
+	_blankCmdProc(blankCmdProc),
+	_argumentErrorProc(argumentErrorProc),
 	_in(in),
-	_cmd_map(std::move(cmd_map))
+	_cmdMap(std::move(cmdMap))
 {}
 
 int stlcli::Console::main()
@@ -93,25 +101,25 @@ int stlcli::Console::main()
 		line_in >> cmd;
 		if (cmd == "")
 		{
-			_blank_cmd_proc_pf(*this);
+			_blankCmdProc(*this);
 			continue;
 		}
 		try
 		{
-			if (_cmd_map.count(cmd))
+			if (_cmdMap.count(cmd))
 			{
-				_cmd_map.at(cmd)._cmd_proc(line_in, *this);
+				_cmdMap.at(cmd)._cmdProc(line_in, *this);
 				continue;
 			}
-			_wrong_cmd_proc_pf(cmd, *this);
+			_wrongCmdProc(cmd, *this);
 		}
 		catch (EndOfMain & e)
 		{
-			return e._return_code;
+			return e._returnValue;
 		}
 		catch (err::ArgumentError & e)
 		{
-			_argument_error_proc_pf(e, *this);
+			_argumentErrorProc(e, *this);
 			continue;
 		}
 	}

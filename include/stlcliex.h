@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 by Yuhao Gu. All rights reserved.
+ * E-Mail: yhgu2000@outlook.com
+v1.1.1 */
+
 #pragma once
 #include "stlcli.h"
 
@@ -12,7 +17,7 @@
 #define DEFAULT_CONSOLE_END() });
 
 /* register commands, use between BEGIN and END */
-#define REG_CMD(cmd_proc,token,remarks) {(token),stlcli::Cmd{(cmd_proc),(remarks)}},
+#define REG_CMD(cmdProc,token,remarks) {(token),stlcli::Cmd{(cmdProc),(remarks)}},
 #define REG_DEFAULT_HELP() {"help",stlcli::Cmd{stlcli::default_cmd_help_proc,"show all avaliable commands."}},
 #define REG_DEFAULT_CLEAR() {"clear",stlcli::Cmd{stlcli::default_cmd_clear_proc,"clear the console."}},
 #define REG_DEFAULT_EXIT() {"exit",stlcli::Cmd{stlcli::default_cmd_exit_proc,"exit program with a num used as a exit code."}},

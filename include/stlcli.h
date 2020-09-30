@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 by Yuhao Gu. All rights reserved.
+ * E-Mail: yhgu2000@outlook.com
+v1.1.1 */
+
 #pragma once
 #include <iostream>
 #include <mutex>
@@ -24,15 +29,15 @@ namespace stlcli
 	void default_cmd_clear_proc(std::istream& argi, Console& con);
 
 	/* console used function types */
-	typedef void (*pfCmdProc)(std::istream& argi, Console& con);
-	typedef void (*pfWrongCmdProc)(const std::string& cmd, Console& con);
-	typedef void (*pfBlankCmdProc)(Console& con);
-	typedef void (*pfArgumentErrorProc)(err::ArgumentError& e, Console& con);
+	typedef void (*CmdProc)(std::istream& argi, Console& con);
+	typedef void (*WrongCmdProc)(const std::string& cmd, Console& con);
+	typedef void (*BlankCmdProc)(Console& con);
+	typedef void (*ArgumentErrorProc)(err::ArgumentError& e, Console& con);
 
 	/* command type */
 	struct Cmd
 	{
-		pfCmdProc _cmd_proc;
+		CmdProc _cmdProc;
 		std::string _remarks;
 	};
 
@@ -43,33 +48,33 @@ namespace stlcli
 	class Console :public std::ostream, public std::mutex
 	{
 	public:
-		pfWrongCmdProc _wrong_cmd_proc_pf;
-		pfBlankCmdProc _blank_cmd_proc_pf;
-		pfArgumentErrorProc _argument_error_proc_pf;
+		WrongCmdProc _wrongCmdProc;
+		BlankCmdProc _blankCmdProc;
+		ArgumentErrorProc _argumentErrorProc;
 		std::istream& _in;
-		CmdMap _cmd_map;
+		CmdMap _cmdMap;
 
 	public:
 		Console(
-			const CmdMap& cmd_map,
+			const CmdMap& cmdMap,
 			std::istream& in = std::cin,
 			std::ostream& out = std::cout,
-			pfWrongCmdProc wrong_cmd_proc_pf = default_wrong_cmd_proc,
-			pfBlankCmdProc blank_cmd_proc_pf = default_blank_cmd_proc,
-			pfArgumentErrorProc argument_error_proc_pf = default_argument_error_proc
+			WrongCmdProc wrongCmdProc = default_wrong_cmd_proc,
+			BlankCmdProc blankCmdProc = default_blank_cmd_proc,
+			ArgumentErrorProc argumentErrorProc = default_argument_error_proc
 		);
 
 		Console(
-			CmdMap&& cmd_map,
+			CmdMap&& cmdMap,
 			std::istream& in = std::cin,
 			std::ostream& out = std::cout,
-			pfWrongCmdProc wrong_cmd_proc_pf = default_wrong_cmd_proc,
-			pfBlankCmdProc blank_cmd_proc_pf = default_blank_cmd_proc,
-			pfArgumentErrorProc argument_error_proc_pf = default_argument_error_proc
+			WrongCmdProc wrongCmdProc = default_wrong_cmd_proc,
+			BlankCmdProc blankCmdProc = default_blank_cmd_proc,
+			ArgumentErrorProc argumentErrorProc = default_argument_error_proc
 		);
 
 	public:
 		int main();
-		void end(int main_return);
+		void end(int mainReturn);
 	};
 }
